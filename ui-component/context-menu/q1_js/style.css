@@ -45,6 +45,6 @@
 }
 
 /* do something here! */
-.context.open {
+.item.open .context {
   display: block;
 }
