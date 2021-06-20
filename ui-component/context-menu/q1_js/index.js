@@ -1,3 +1,5 @@
+import './style.css';
+
 // Write Javascript code here!
 const app = document.getElementById('app');
 app.addEventListener('click', (e) => {
