@@ -1,29 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useRef} from "react";
 import "./style.css";
 import Detail from "./Detail";
 import dummyData from "./dummyData";
 
-const initOpenedIndex = null;
-
 export default function App() {
-  const [openedIndex, setOpen] = useState(initOpenedIndex);
+  const latestOpenedRef = useRef(null);
 
-  const togglePopover = index => e => {
-    e.preventDefault();
-    e.stopPropagation();
-    setOpen(openedIndex === index ? initOpenedIndex : index);
-  };
-
-  const closeAll = () => {
-    setOpen(initOpenedIndex);
+  const closeDetail = () => {
+    latestOpenedRef.current && latestOpenedRef.current.removeAttribute('open');
   };
 
   useEffect(() => {
-    document.body.addEventListener("click", closeAll);
-    return () => {
-      document.body.removeEventListener("click", closeAll);
-    };
-  });
+    document.addEventListener('click', closeDetail);
+    return () => document.removeEventListener('click', closeDetail);
+  }, []);
+
+  const handleClickDetail = e => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const latestOpenedElem = latestOpenedRef.current;
+    const currentTarget = e.currentTarget;
+
+    closeDetail();
+
+    if (latestOpenedElem !== currentTarget) {
+      latestOpenedRef.current = currentTarget;
+      currentTarget.setAttribute('open', '');
+
+    } else {
+      latestOpenedRef.current = null;
+    }
+  };
 
   return (
     <div className="wrapper">
@@ -32,8 +40,7 @@ export default function App() {
           key={`detail${i}`}
           text={text}
           context={context}
-          open={openedIndex === i}
-          onToggle={togglePopover(i)}
+          onClick={handleClickDetail}
         />
       ))}
     </div>
