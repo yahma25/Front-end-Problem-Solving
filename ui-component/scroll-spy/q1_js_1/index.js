@@ -9,16 +9,12 @@ const offsetTops = contentItems.map((elem) => {
   return [ofs - clh / 2, ofs + clh / 2];
 });
 
-offsetTops.forEach(([ofs, clh]) => console.warn(ofs, clh));
+let latestNavItem = navItems[0];
 
-let latestNavItem = null;
+let timeoutId;
 
-window.addEventListener("scroll", (e) => {
-  const { scrollTop } = e.target.scrollingElement;
-  // do something
-  offsetTops.forEach(([ ofs, clh ]) => console.warn(ofs, clh));
+const onChangeNavItemActivated = (scrollTop) => {
   const foundOffsetTopIdx = offsetTops.findIndex(([from, to]) => from <= scrollTop && to > scrollTop);
-  console.log('foundIdx', foundOffsetTopIdx, ', scrollTop', scrollTop);
 
   const currentNavItem = navItems[foundOffsetTopIdx];
   if (latestNavItem !== currentNavItem) {
@@ -26,6 +22,17 @@ window.addEventListener("scroll", (e) => {
     currentNavItem.classList.add('on');
     latestNavItem = currentNavItem;
   }
+}
+
+window.addEventListener("scroll", (e) => {
+  const { scrollTop } = e.target.scrollingElement;
+  // do something
+
+  if (timeoutId >= 0) {
+    clearTimeout(timeoutId);
+  }
+
+  timeoutId = setTimeout(() => onChangeNavItemActivated(scrollTop), 50);
 });
 
 navElem.addEventListener("click", (e) => {
