@@ -1,12 +1,12 @@
 export const throttle = (func, delay) => {
   let throttled = false;
 
-  return (e) => {
+  return (...args) => {
     if (throttled) return;
     throttled = true;
 
     setTimeout(() => {
-      func(e);
+      func(...args);
       throttled = false;
     }, delay);
   };
